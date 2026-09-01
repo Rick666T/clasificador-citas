@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Herramienta para clasificar citas académicas tipo A, B y C (autocitas)."
+    />
+    <title>Clasificador de citas A, B y C</title>
+    <link rel="stylesheet" href="styles.css?v=3.3.1" />
+    <script src="app.js?v=3.5.0" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#inicio" aria-label="Ir al inicio">
+        <span class="brand-mark" aria-hidden="true">C</span>
+        <span>Clasificador de citas A · B · C</span>
+      </a>
+      <details class="help-menu">
+        <summary>Instrucciones</summary>
+        <div class="help-panel">
+          <div class="help-heading">
+            <p class="eyebrow">Guía rápida</p>
+            <h2>Cómo utilizar la herramienta</h2>
+          </div>
+          <ol class="help-steps">
+            <li><strong>Pega la referencia completa</strong> del documento que se analizará.</li>
+            <li><strong>Escribe sus autores, uno por línea</strong>, preferentemente como “Apellidos, Nombres”, y revisa las etiquetas detectadas.</li>
+            <li><strong>Selecciona al investigador evaluado</strong> entre los autores del documento original.</li>
+            <li><strong>Pega una referencia citante por línea</strong> y presiona “Analizar citas”.</li>
+            <li><strong>Revisa cada resultado</strong>, corrige manualmente los casos dudosos y después copia el resumen o el reporte completo.</li>
+          </ol>
+          <div class="help-warning">
+            <strong>Capacidad y visualización de los resultados.</strong>
+            <span>No existe un límite numérico fijo de autores, referencias o resultados: cada línea no vacía produce una clasificación. La tabla muestra primero 100 resultados y permite cargar otros 100 o mostrarlos todos; los conteos y el reporte siempre incluyen la lista completa.</span>
+            <span>El límite práctico depende de la memoria y potencia del dispositivo. Además, la búsqueda de nombres se realiza dentro de los primeros 1,600 caracteres de cada referencia citante; en listas de autoría extraordinariamente largas podrían no reconocerse nombres situados después de esa zona.</span>
+          </div>
+          <div class="help-warning">
+            <strong>Importante: el resultado no es exacto ni definitivo.</strong>
+            <span>La herramienta compara variantes de nombres y puede producir coincidencias incorrectas o no reconocer formatos atípicos. No confirma identidades ni consulta ORCID u otras bases externas.</span>
+          </div>
+          <p class="help-note">La clasificación automática es una propuesta de apoyo. La revisión humana de las coincidencias y de cada referencia es indispensable.</p>
+        </div>
+      </details>
+    </header>
+
+    <main class="page-shell" id="inicio">
+      <section class="hero">
+        <div class="hero-title">
+          <p class="eyebrow">Análisis bibliométrico asistido</p>
+          <h1><span>Clasificador de citas</span><span class="title-types">A, B y C</span></h1>
+        </div>
+        <div class="objective-card">
+          <span class="objective-label">Objetivo</span>
+          <p>Esta herramienta surge para auxiliar la asignación de la clasificación de citas por documento en la plataforma Rizoma.</p>
+          <p>Es útil para investigadores, bibliotecarios y cualquier persona relacionada con este proceso de revisión.</p>
+        </div>
+      </section>
+
+      <section class="rules-section" aria-labelledby="rulesTitle">
+        <div class="rules-intro">
+          <span class="section-icon" aria-hidden="true">ABC</span>
+          <div>
+            <h2 id="rulesTitle">Criterios de clasificación</h2>
+            <p>Estas categorías son excluyentes. Si aparece el investigador evaluado, prevalece la clasificación C.</p>
+          </div>
+        </div>
+        <div class="rules-grid">
+          <article><span class="rule-tag tag-a">A</span><h3>Cita tipo A</h3><p>Ningún autor del documento original aparece en la obra que cita.</p></article>
+          <article><span class="rule-tag tag-b">B</span><h3>Cita tipo B</h3><p>Aparece algún coautor del documento original, pero no el investigador evaluado.</p></article>
+          <article><span class="rule-tag tag-c">C</span><h3>Cita tipo C · Autocita</h3><p>Aparece el investigador evaluado. Se registra como tipo C y no se suma a A ni B.</p></article>
+        </div>
+      </section>
+
+      <section class="workspace" aria-label="Formulario de análisis">
+        <article class="form-card">
+          <div class="card-heading">
+            <span class="step-number">1</span>
+            <div>
+              <h2>Documento original</h2>
+              <p>Indica el trabajo citado y quién está siendo evaluado.</p>
+            </div>
+          </div>
+
+          <label for="documentReference">Referencia del documento analizado</label>
+          <textarea
+            id="documentReference"
+            class="compact-textarea"
+            placeholder="Tavira Sánchez, R., Turnbull Muñoz, F. R., &amp; López Andrade, M. (2024). Modelo ficticio para analizar servicios de información académica..."
+          ></textarea>
+
+          <label for="authorsInput">Autores del documento original</label>
+          <textarea
+            id="authorsInput"
+            class="author-textarea"
+            placeholder="Tavira Sánchez, R.&#10;Turnbull Muñoz, F. R.&#10;López Andrade, M."
+          ></textarea>
+          <p class="field-hint">
+            Admite “Nombre Apellido”, “Apellido, Nombre” y “Apellido, I.”.
+            Para mayor precisión, usa un autor por línea o sepáralos con punto y coma.
+          </p>
+          <div id="authorPreview" class="author-preview" aria-label="Autores detectados"></div>
+
+          <label for="evaluatedAuthor">Investigador evaluado</label>
+          <select id="evaluatedAuthor" disabled>
+            <option value="">Selecciona un autor</option>
+          </select>
+        </article>
+
+        <article class="form-card">
+          <div class="card-heading">
+            <span class="step-number">2</span>
+            <div>
+              <h2>Referencias que citan</h2>
+              <p>Pega todas las referencias que citan al trabajo original.</p>
+            </div>
+          </div>
+
+          <label for="citingInput">Una referencia por línea</label>
+          <textarea
+            id="citingInput"
+            class="references-textarea"
+            placeholder="López Andrade, M., &amp; Hernández Ruiz, C. (2025). Evaluación ficticia de servicios bibliotecarios...&#10;Tavira Sánchez, R., &amp; Morales León, A. (2026). Análisis ficticio de información especializada..."
+          ></textarea>
+          <div class="input-meta">
+            <span>Reconoce acentos, guiones, orden invertido, iniciales, primer apellido y una errata tipográfica leve.</span>
+            <span id="referenceCount">0 referencias</span>
+          </div>
+
+          <div id="errorMessage" class="error-message" role="alert" hidden></div>
+
+          <div class="actions">
+            <button id="analyzeButton" class="primary-button" type="button">Analizar citas</button>
+            <button id="exampleButton" class="secondary-button" type="button">Probar ejemplo</button>
+            <button id="clearButton" class="icon-button" type="button" title="Limpiar todos los campos" aria-label="Limpiar todos los campos">↺</button>
+          </div>
+        </article>
+      </section>
+
+      <section id="resultsSection" class="results-section" hidden>
+        <div class="results-heading">
+          <div>
+            <p class="eyebrow">Análisis completado</p>
+            <h2>Resultado de la clasificación</h2>
+            <p id="resultsDescription"></p>
+          </div>
+          <button id="copySummaryButton" class="secondary-button" type="button">Copiar resumen</button>
+        </div>
+
+        <div class="metrics-grid">
+          <article class="metric metric-a"><span class="metric-label">Citas tipo A</span><strong id="countA">0</strong><span>Sin autores coincidentes</span></article>
+          <article class="metric metric-b"><span class="metric-label">Citas tipo B</span><strong id="countB">0</strong><span>Coincide algún coautor</span></article>
+          <article class="metric metric-c"><span class="metric-label">Citas tipo C</span><strong id="countC">0</strong><span>Autocitas del evaluado</span></article>
+          <article class="metric metric-total"><span class="metric-label">Citas consideradas</span><strong id="eligibleTotal">0</strong><span>Tipos A + B</span></article>
+        </div>
+
+        <article class="report-card">
+          <div class="report-topline">
+            <div>
+              <h3>Detalle por referencia</h3>
+              <p>Los conteos se actualizan al cambiar la clasificación de una fila.</p>
+            </div>
+            <button id="copyReportButton" class="text-button" type="button">Copiar reporte completo</button>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>#</th><th>Referencia citante</th><th>Autor / variante detectada</th><th>Clasificación</th></tr></thead>
+              <tbody id="resultsBody"></tbody>
+            </table>
+          </div>
+          <div id="pagination" class="results-pagination" hidden>
+            <span id="paginationText"></span>
+            <div>
+              <button id="showMoreButton" class="secondary-button" type="button">Mostrar 100 más</button>
+              <button id="showAllButton" class="text-button" type="button">Mostrar todas</button>
+            </div>
+          </div>
+        </article>
+      </section>
+
+    </main>
+
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-content">
+          <p class="footer-credit"><strong>Desarrollo:</strong> Mtro. Ricardo Tavira Sánchez · Subdirección de Servicios de Información Especializada de la DGBSDI, UNAM.</p>
+          <p class="license-line">
+            <a href="./">Clasificador de citas A, B y C</a>
+            <span>© 2026 por</span>
+            <a href="https://scholar.google.com/citations?user=WFkt_DIAAAAJ&amp;hl=es" target="_blank" rel="noopener noreferrer">Ricardo Tavira Sánchez</a>
+            <span>tiene licencia</span>
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="license noopener noreferrer">Creative Commons Atribución-No Comercial-CompartirIgual 4.0 Internacional</a>
+            <span class="cc-icons" aria-label="Licencia Creative Commons: atribución, no comercial y compartir igual">
+              <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="Creative Commons" loading="lazy" decoding="async" />
+              <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="Atribución" loading="lazy" decoding="async" />
+              <img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" alt="No comercial" loading="lazy" decoding="async" />
+              <img src="https://mirrors.creativecommons.org/presskit/icons/sa.svg" alt="Compartir igual" loading="lazy" decoding="async" />
+            </span>
+          </p>
+        </div>
+        <span id="visitCounter" class="visit-counter" hidden></span>
+      </div>
+    </footer>
+</body>
+</html>
