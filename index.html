@@ -8,8 +8,8 @@
       content="Herramienta para clasificar citas académicas tipo A, B y C (autocitas)."
     />
     <title>Clasificador de citas A, B y C</title>
-    <link rel="stylesheet" href="styles.css?v=3.3.1" />
-    <script src="app.js?v=3.5.0" defer></script>
+    <link rel="stylesheet" href="styles.css?v=3.7.0" />
+    <script src="app.js?v=3.7.0" defer></script>
   </head>
   <body>
     <header class="topbar">
@@ -155,6 +155,49 @@
           <article class="metric metric-total"><span class="metric-label">Citas consideradas</span><strong id="eligibleTotal">0</strong><span>Tipos A + B</span></article>
         </div>
 
+        <article class="chart-card" aria-labelledby="distributionTitle">
+          <div class="chart-heading">
+            <div>
+              <h3 id="distributionTitle">Distribución por tipo de cita</h3>
+              <p>La gráfica y sus porcentajes se actualizan al reclasificar cualquier referencia.</p>
+            </div>
+            <span class="chart-caption">Porcentaje del total analizado</span>
+          </div>
+          <div class="chart-content">
+            <div
+              id="citationChart"
+              class="citation-chart"
+              role="img"
+              aria-label="Distribución de citas: todavía no hay resultados"
+            >
+              <div class="chart-center">
+                <strong id="chartTotal">0</strong>
+                <span>Total</span>
+              </div>
+            </div>
+            <div class="chart-legend" aria-label="Datos de la gráfica">
+              <div class="legend-row">
+                <span class="legend-dot dot-a" aria-hidden="true"></span>
+                <span class="legend-label">Tipo A</span>
+                <strong id="chartAValue">0</strong>
+                <span id="chartAPercentage" class="legend-percentage">0%</span>
+              </div>
+              <div class="legend-row">
+                <span class="legend-dot dot-b" aria-hidden="true"></span>
+                <span class="legend-label">Tipo B</span>
+                <strong id="chartBValue">0</strong>
+                <span id="chartBPercentage" class="legend-percentage">0%</span>
+              </div>
+              <div class="legend-row">
+                <span class="legend-dot dot-c" aria-hidden="true"></span>
+                <span class="legend-label">Tipo C · Autocita</span>
+                <strong id="chartCValue">0</strong>
+                <span id="chartCPercentage" class="legend-percentage">0%</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
         <article class="report-card">
           <div class="report-topline">
             <div>
@@ -199,8 +242,19 @@
             </span>
           </p>
         </div>
-        <span id="visitCounter" class="visit-counter" hidden></span>
+        <a
+          class="visit-counter"
+          href="https://hits.sh/rick666t.github.io/clasificador-citas/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Consultar estadísticas del contador de visitas"
+        >
+          <img
+            src="https://hits.sh/rick666t.github.io/clasificador-citas.svg?view=total&amp;style=flat&amp;label=visitas&amp;extraCount=249&amp;color=7b8493&amp;labelColor=edf0f3"
+            alt="Contador acumulado de visitas"
+          />
+        </a>
       </div>
     </footer>
-</body>
+  </body>
 </html>

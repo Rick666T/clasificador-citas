@@ -70,6 +70,14 @@ const elements =
         countB: document.querySelector("#countB"),
         countC: document.querySelector("#countC"),
         eligibleTotal: document.querySelector("#eligibleTotal"),
+        citationChart: document.querySelector("#citationChart"),
+        chartTotal: document.querySelector("#chartTotal"),
+        chartAValue: document.querySelector("#chartAValue"),
+        chartBValue: document.querySelector("#chartBValue"),
+        chartCValue: document.querySelector("#chartCValue"),
+        chartAPercentage: document.querySelector("#chartAPercentage"),
+        chartBPercentage: document.querySelector("#chartBPercentage"),
+        chartCPercentage: document.querySelector("#chartCPercentage"),
         resultsBody: document.querySelector("#resultsBody"),
         pagination: document.querySelector("#pagination"),
         paginationText: document.querySelector("#paginationText"),
@@ -80,7 +88,6 @@ const elements =
         clearButton: document.querySelector("#clearButton"),
         copySummaryButton: document.querySelector("#copySummaryButton"),
         copyReportButton: document.querySelector("#copyReportButton"),
-        visitCounter: document.querySelector("#visitCounter"),
       };
 
 let authors = [];
@@ -798,6 +805,42 @@ function getCounts() {
   );
 }
 
+function formatChartPercentage(value, total) {
+  if (!total) return "0%";
+  return `${new Intl.NumberFormat("es-MX", {
+    maximumFractionDigits: 1,
+  }).format((value / total) * 100)}%`;
+}
+
+function updateChart(counts) {
+  const total = counts.A + counts.B + counts.SELF;
+  const percentageA = total ? (counts.A / total) * 100 : 0;
+  const percentageB = total ? (counts.B / total) * 100 : 0;
+  const endA = percentageA;
+  const endB = percentageA + percentageB;
+
+  elements.chartTotal.textContent = total.toLocaleString("es-MX");
+  elements.chartAValue.textContent = counts.A.toLocaleString("es-MX");
+  elements.chartBValue.textContent = counts.B.toLocaleString("es-MX");
+  elements.chartCValue.textContent = counts.SELF.toLocaleString("es-MX");
+  elements.chartAPercentage.textContent = formatChartPercentage(counts.A, total);
+  elements.chartBPercentage.textContent = formatChartPercentage(counts.B, total);
+  elements.chartCPercentage.textContent = formatChartPercentage(
+    counts.SELF,
+    total,
+  );
+
+  elements.citationChart.style.background = total
+    ? `conic-gradient(var(--chart-a) 0 ${endA}%, var(--chart-b) ${endA}% ${endB}%, var(--chart-c) ${endB}% 100%)`
+    : "#e8ecf0";
+  elements.citationChart.setAttribute(
+    "aria-label",
+    total
+      ? `Distribuci\u00f3n de ${total} referencias: ${counts.A} tipo A, ${counts.B} tipo B y ${counts.SELF} tipo C o autocitas.`
+      : "Distribuci\u00f3n de citas: todav\u00eda no hay resultados",
+  );
+}
+
 function createCell(className, value) {
   const cell = document.createElement("td");
   if (className) cell.className = className;
@@ -871,6 +914,7 @@ function renderResults() {
   elements.countB.textContent = counts.B.toLocaleString("es-MX");
   elements.countC.textContent = counts.SELF.toLocaleString("es-MX");
   elements.eligibleTotal.textContent = eligible.toLocaleString("es-MX");
+  updateChart(counts);
   elements.resultsDescription.textContent = `${rows.length.toLocaleString(
     "es-MX",
   )} referencias revisadas para ${
@@ -903,9 +947,7 @@ function buildSummaryText(documentReference, evaluatedAuthor, analysisRows) {
   const pctB = eligible ? Math.round((counts.B / eligible) * 100) : 0;
   return [
     "RESULTADO DEL AN\u00c1LISIS DE CITAS",
-    "",
     `Investigador evaluado: ${evaluatedAuthor}`,
-    "",
     "Referencia del documento analizado:",
     documentReference.trim(),
     "",
@@ -945,7 +987,40 @@ function buildReportText(documentReference, evaluatedAuthor, analysisRows) {
     documentReference,
     evaluatedAuthor,
     analysisRows,
-  )}\n\nDETALLE POR REFERENCIA${detail ? `\n\n${detail}` : ""}`;
+  )}\n\nDETALLE POR REFERENCIA${detail ? `\n${detail}` : ""}`;
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function buildReportHtml(documentReference, evaluatedAuthor, analysisRows) {
+  const counts = analysisRows.reduce(
+    (totals, row) => {
+      totals[row.type]++;
+      return totals;
+    },
+    { A: 0, B: 0, SELF: 0 },
+  );
+  const eligible = counts.A + counts.B;
+  const pctA = eligible ? Math.round((counts.A / eligible) * 100) : 0;
+  const pctB = eligible ? Math.round((counts.B / eligible) * 100) : 0;
+  const detail = analysisRows
+    .map((row) => {
+      const note =
+        row.type !== row.detectedType
+          ? `<p style="margin:0"><strong>Nota:</strong> clasificaci\u00f3n ajustada manualmente; detecci\u00f3n original: ${escapeHtml(typeLabel(row.detectedType))}.</p>`
+          : "";
+      return `<div style="margin:0 0 18px;padding:0 0 2px;border-bottom:1px solid #dfe4ea"><p style="margin:0"><strong>${row.id}. ${escapeHtml(typeLabel(row.type))}</strong></p><p style="margin:0"><strong>Referencia:</strong> ${escapeHtml(row.reference)}</p><p style="margin:0"><strong>Coincidencia:</strong> ${escapeHtml(row.matches.join(", ") || "Ninguna")}</p>${note}</div>`;
+    })
+    .join("");
+
+  return `<div style="font-family:Arial,sans-serif;color:#17243e;line-height:1.35"><h2 style="margin:0 0 18px;font-size:18px"><strong>RESULTADO DEL AN\u00c1LISIS DE CITAS</strong></h2><p style="margin:0 0 14px"><strong>Investigador evaluado:</strong> ${escapeHtml(evaluatedAuthor)}</p><p style="margin:0 0 24px"><strong>Referencia del documento analizado:</strong><br>${escapeHtml(documentReference.trim())}</p><h3 style="margin:0 0 18px;font-size:15px"><strong>RESUMEN DE CLASIFICACI\u00d3N</strong></h3><div style="margin:0 0 26px"><p style="margin:0"><strong>Total de referencias analizadas:</strong> ${analysisRows.length}</p><p style="margin:0"><strong>Citas consideradas (A + B):</strong> ${eligible}</p><p style="margin:0"><strong>Citas tipo A:</strong> ${counts.A} (${pctA}% de las citas consideradas)</p><p style="margin:0"><strong>Citas tipo B:</strong> ${counts.B} (${pctB}% de las citas consideradas)</p><p style="margin:0"><strong>Citas tipo C (autocitas del evaluado):</strong> ${counts.SELF}</p></div><h3 style="margin:0 0 18px;font-size:15px"><strong>DETALLE POR REFERENCIA</strong></h3>${detail}</div>`;
 }
 
 function summaryText() {
@@ -964,9 +1039,16 @@ function reportText() {
   );
 }
 
-async function copyText(text, button, defaultLabel) {
+async function copyText(text, html, button, defaultLabel) {
   try {
-    if (navigator.clipboard?.writeText) {
+    if (navigator.clipboard?.write && typeof ClipboardItem !== "undefined") {
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          "text/plain": new Blob([text], { type: "text/plain" }),
+          "text/html": new Blob([html], { type: "text/html" }),
+        }),
+      ]);
+    } else if (navigator.clipboard?.writeText) {
       await navigator.clipboard.writeText(text);
     } else {
       const fallback = document.createElement("textarea");
@@ -1006,24 +1088,6 @@ function clearAll() {
   invalidateResults();
 }
 
-async function loadVisitCounter() {
-  try {
-    const response = await fetch("/api/visits", {
-      method: "POST",
-      headers: { Accept: "application/json" },
-    });
-    if (!response.ok) return;
-    const payload = await response.json();
-    if (typeof payload.count !== "number") return;
-    elements.visitCounter.textContent = `${payload.count.toLocaleString(
-      "es-MX",
-    )} visitas`;
-    elements.visitCounter.hidden = false;
-  } catch {
-    // The classifier keeps working even when the host does not support PHP.
-  }
-}
-
 const publicApi = {
   EXAMPLE,
   normalize,
@@ -1036,6 +1100,7 @@ const publicApi = {
   buildSummaryText,
   buildDetailText,
   buildReportText,
+  buildReportHtml,
 };
 
 if (typeof module !== "undefined" && module.exports) {
@@ -1057,11 +1122,25 @@ if (elements) {
   elements.exampleButton.addEventListener("click", loadExample);
   elements.clearButton.addEventListener("click", clearAll);
   elements.copySummaryButton.addEventListener("click", () =>
-    copyText(reportText(), elements.copySummaryButton, "Copiar resumen"),
+    copyText(
+      reportText(),
+      buildReportHtml(
+        elements.documentReference.value,
+        elements.evaluatedAuthor.value,
+        rows,
+      ),
+      elements.copySummaryButton,
+      "Copiar resumen",
+    ),
   );
   elements.copyReportButton.addEventListener("click", () =>
     copyText(
       reportText(),
+      buildReportHtml(
+        elements.documentReference.value,
+        elements.evaluatedAuthor.value,
+        rows,
+      ),
       elements.copyReportButton,
       "Copiar reporte completo",
     ),
@@ -1077,5 +1156,4 @@ if (elements) {
 
   renderAuthors();
   updateReferenceCount();
-  loadVisitCounter();
 }
