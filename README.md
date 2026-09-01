@@ -108,7 +108,7 @@ La versión fue comprobada mediante pruebas de regresión que incluyen:
 - Se diferenciaron claramente los dos botones de copia.
 - **Copiar resumen** entrega únicamente los datos generales y los conteos.
 - **Copiar reporte completo** conserva el detalle por referencia.
-- Se mantuvieron la gráfica dinámica, el contador compatible con GitHub Pages y las 250 visitas acumuladas.
+- Se mantuvieron la gráfica dinámica, el contador compatible con GitHub Pages.
 
 ### Versión 3.7.0
 
@@ -116,7 +116,6 @@ La versión fue comprobada mediante pruebas de regresión que incluyen:
 - Se conservó la gráfica dinámica incorporada en la versión 3.6.0.
 - Se mantuvo el formato profesional y el espaciado equilibrado del reporte de la versión 3.6.1.
 - Se sustituyó el contador basado en PHP por uno compatible con páginas estáticas.
-- Se trasladaron las 250 visitas acumuladas de la versión anterior para dar continuidad al conteo público.
 - Se actualizó la documentación para el repositorio de GitHub.
 
 ### Versión 3.6.1
