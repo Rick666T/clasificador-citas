@@ -999,6 +999,21 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
+function buildSummaryHtml(documentReference, evaluatedAuthor, analysisRows) {
+  const counts = analysisRows.reduce(
+    (totals, row) => {
+      totals[row.type]++;
+      return totals;
+    },
+    { A: 0, B: 0, SELF: 0 },
+  );
+  const eligible = counts.A + counts.B;
+  const pctA = eligible ? Math.round((counts.A / eligible) * 100) : 0;
+  const pctB = eligible ? Math.round((counts.B / eligible) * 100) : 0;
+
+  return `<div style="font-family:Arial,sans-serif;color:#17243e;line-height:1.35"><h2 style="margin:0 0 18px;font-size:18px"><strong>RESULTADO DEL AN\u00c1LISIS DE CITAS</strong></h2><p style="margin:0 0 14px"><strong>Investigador evaluado:</strong> ${escapeHtml(evaluatedAuthor)}</p><p style="margin:0 0 24px"><strong>Referencia del documento analizado:</strong><br>${escapeHtml(documentReference.trim())}</p><h3 style="margin:0 0 18px;font-size:15px"><strong>RESUMEN DE CLASIFICACI\u00d3N</strong></h3><div><p style="margin:0"><strong>Total de referencias analizadas:</strong> ${analysisRows.length}</p><p style="margin:0"><strong>Citas consideradas (A + B):</strong> ${eligible}</p><p style="margin:0"><strong>Citas tipo A:</strong> ${counts.A} (${pctA}% de las citas consideradas)</p><p style="margin:0"><strong>Citas tipo B:</strong> ${counts.B} (${pctB}% de las citas consideradas)</p><p style="margin:0"><strong>Citas tipo C (autocitas del evaluado):</strong> ${counts.SELF}</p></div></div>`;
+}
+
 function buildReportHtml(documentReference, evaluatedAuthor, analysisRows) {
   const counts = analysisRows.reduce(
     (totals, row) => {
@@ -1100,6 +1115,7 @@ const publicApi = {
   buildSummaryText,
   buildDetailText,
   buildReportText,
+  buildSummaryHtml,
   buildReportHtml,
 };
 
@@ -1123,8 +1139,8 @@ if (elements) {
   elements.clearButton.addEventListener("click", clearAll);
   elements.copySummaryButton.addEventListener("click", () =>
     copyText(
-      reportText(),
-      buildReportHtml(
+      summaryText(),
+      buildSummaryHtml(
         elements.documentReference.value,
         elements.evaluatedAuthor.value,
         rows,

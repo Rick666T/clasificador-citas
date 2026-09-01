@@ -29,7 +29,12 @@ Las categorías son excluyentes. Si aparecen simultáneamente el investigador ev
 7. Revise la coincidencia localizada y corrija manualmente cualquier resultado dudoso.
 8. Use **Copiar resumen** o **Copiar reporte completo** para obtener el reporte profesional.
 
-Los dos botones de copia generan el reporte completo. Cuando el navegador y la aplicación de destino lo permiten, se conservan en negritas los títulos de las secciones y las etiquetas principales. El texto mantiene una separación moderada entre los datos generales, el resumen y cada referencia.
+Los dos botones de copia tienen funciones distintas:
+
+- **Copiar resumen** incluye solamente los datos generales y los conteos A, B y C, sin el detalle de las referencias.
+- **Copiar reporte completo** incluye los datos generales, los conteos y el detalle de todas las referencias analizadas.
+
+Cuando el navegador y la aplicación de destino lo permiten, se conservan en negritas los títulos de las secciones y las etiquetas principales. El reporte completo mantiene una separación moderada entre los datos generales, el resumen y cada referencia.
 
 ## Reconocimiento de nombres
 
@@ -71,7 +76,7 @@ La tabla muestra inicialmente 100 resultados y permite cargar otros 100 o mostra
 
 Los datos bibliográficos se procesan localmente en el navegador y no se envían al contador. Los botones de copia acceden al portapapeles únicamente cuando la persona los pulsa.
 
-El sitio muestra un contador público y agregado proporcionado por [Hits](https://hits.sh/). 
+El sitio muestra un contador público y agregado proporcionado por [Hits](https://hits.sh/). El conteo continuó desde las **250 visitas acumuladas** en la versión anterior alojada en ChatGPT Sites; a partir de esa cifra registra las aperturas de la versión publicada en GitHub Pages. El contador no recibe los autores, las referencias ni las clasificaciones introducidas en la herramienta.
 
 ## Archivos principales
 
@@ -97,6 +102,13 @@ La versión fue comprobada mediante pruebas de regresión que incluyen:
 - orden, negritas y espaciado del reporte copiable.
 
 ## Historial resumido
+
+### Versión 3.7.1
+
+- Se diferenciaron claramente los dos botones de copia.
+- **Copiar resumen** entrega únicamente los datos generales y los conteos.
+- **Copiar reporte completo** conserva el detalle por referencia.
+- Se mantuvieron la gráfica dinámica, el contador compatible con GitHub Pages y las 250 visitas acumuladas.
 
 ### Versión 3.7.0
 
