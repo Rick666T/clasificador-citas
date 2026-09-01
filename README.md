@@ -71,7 +71,7 @@ La tabla muestra inicialmente 100 resultados y permite cargar otros 100 o mostra
 
 Los datos bibliográficos se procesan localmente en el navegador y no se envían al contador. Los botones de copia acceden al portapapeles únicamente cuando la persona los pulsa.
 
-El sitio muestra un contador público y agregado proporcionado por [Hits](https://hits.sh/). El conteo continuó desde las **250 visitas acumuladas** en la versión anterior alojada en ChatGPT Sites; a partir de esa cifra registra las aperturas de la versión publicada en GitHub Pages. El contador no recibe los autores, las referencias ni las clasificaciones introducidas en la herramienta.
+El sitio muestra un contador público y agregado proporcionado por [Hits](https://hits.sh/). 
 
 ## Archivos principales
 
